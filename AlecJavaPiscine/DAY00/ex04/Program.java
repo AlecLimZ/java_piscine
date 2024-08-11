@@ -38,7 +38,6 @@ class Program
 		Scanner sc = new Scanner(System.in);
 		System.out.print("-> ");
 		String input = sc.nextLine().toUpperCase();
-		System.out.println(input.replaceAll("$", ""));
 		char[] s = ft_getUniqueStr(input);
 		ft_run(s, input);
 	}
@@ -53,7 +52,6 @@ class Program
 		while (++i < len)
 		{
 			tmp = llen - input.replaceAll(String.valueOf(s[i]), "").length();
-			System.out.println(s[i] + " len: " + tmp);
 			if (index < 10)
 				total[index++] = tmp;
 			else
@@ -61,14 +59,85 @@ class Program
 				sf = ft_assign(sf, tmp, s[i]);
 			}
 		}
+		sf = ft_comb_sort(sf);
+		ft_check(-1, sf);
+	}
+
+	public static int getNextGap(int gap)
+	{
+		gap = (gap * 10) / 13;
+		if (gap < 1)
+			return (1);
+		return (gap);
+	}
+
+	public static char[] ft_comb_sort(char[] sf)
+	{
+		int len = total.length;
+		int gap = len;
+		boolean swap = true;
+		int ntmp;
+		char ctmp;
+
+		while (gap != 1 || swap)
+		{
+			gap = getNextGap(gap);
+			swap = false;
+			for (int i = 0; i < len - gap; i++)
+			{
+				if (total[i] < total[i + gap])
+				{
+					ntmp = total[i];
+					ctmp = sf[i];
+					total[i] = total[i + gap];
+					sf[i] = sf[i + gap];
+					total[i + gap] = ntmp;
+					sf[i + gap] = ctmp;
+					swap = true;
+				}
+			}
+		}
+		return (sf);
 	}
 
 	public static char[] ft_assign(char[] sf, int tmp, char c)
 	{
-		int i = -1;
+		int i;
 		int min = ft_getmin();
-		System.out.println("min: " + min);
+		String str = String.valueOf(sf);
+		if (tmp > min)
+		{
+			i = 10;
+			while (--i >= 0)
+			{
+				if (min == total[i])
+				{
+					total[i] = tmp;
+					str = str.replace(String.valueOf(c), "");
+					str = str.replace(sf[i], c);
+					sf = str.toCharArray();
+					break ;
+				}
+			}
+		}
 		return (sf);
+	}
+
+	public static void ft_check(int i, char[] s)
+	{
+		double ns = total[0] / 10.0;
+		double height = total[0] / ns;
+		int h = (int)height;
+		if (++i < 10 && i < s.length)
+		{
+			System.out.println(" " + total[i]);
+			int j = -1;
+			while (++j < h)
+			{
+				System.out.print(" #");
+				ft_check(i, s);
+			}
+		}
 	}
 
 	public static int ft_getmin()
